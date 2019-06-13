@@ -1,28 +1,53 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 <script type="text/javascript">
+  // get cookie
+  function setCookie(name,value,days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+function eraseCookie(name) {   
+    document.cookie = name+'=; Max-Age=-99999999;';  
+}
+
   // socket.io script
   var mB = document.getElementById('messageBox');
   var socket = io.connect('http://' + document.domain + ':' + location.port);
+  let user_name = getCookie('username');
   socket.on( 'connect', function() {
-    socket.emit( 'my event', {
-      data: 'User Connected'
+    socket.emit( 'room-1', {
+      data: user_name+' connected.'
     } )
     var form = $( 'form' ).on( 'submit', function( e ) {
       e.preventDefault()
-      let user_name = $( 'input.username' ).val()
       let user_input = $( 'input.message' ).val()
-      socket.emit( 'my event', {
+      socket.emit( 'room-1', {
         user_name : user_name,
         message : user_input
       } )
       $( 'input.message' ).val( '' ).focus()
     } )
   } )
-  socket.on( 'my response', function( msg ) {
-    console.log( msg )
-    if( typeof msg.user_name !== 'undefined' ) {
-      $( 'h3' ).remove()
+  socket.on( 'message-broadcast', function( msg ) {
+    if( typeof msg.data !== 'undefined' ) {
+      $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.data+'</div>' )
+    }
+    else if( typeof msg.user_name !== 'undefined' ) {
       $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+':</b> '+msg.message+'</div>' )
     }
     mB.scrollTop = mB.scrollHeight;

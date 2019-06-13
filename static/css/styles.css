@@ -7,7 +7,7 @@
   width: calc(100% - 37.5px);
 }
 .content{
-	background-color : gray;
+	background-color : #333;
 	padding: 5px;
   height: calc(100vh - 50px);
 }
@@ -41,6 +41,7 @@ html [type="button"],
 }
 
 .message{
+  font-family: 'Roboto Mono';
 	width: calc(100% - 70px);
 }
 
@@ -86,6 +87,7 @@ html [type="button"],
 
 
 .message_holder{
+  font-family: 'Roboto Mono';
 	padding:10px;
 	background-color: white;
   box-shadow: 10px;
