@@ -1,0 +1,19 @@
+<html>
+	<head>
+		{% include 'header.html' %}
+	</head>
+	<body>
+		<div class="row">
+			<div class="col-6">
+				{% include 'chatbox/chatbox.html' %}
+			</div>
+			<div class="col-3">
+				{% include 'onlineUsers/onlineUsers.html' %}
+			</div>
+			<div class="col-3">
+				{% include 'rooms/rooms.html' %}
+			</div>
+		</div>
+		{% include 'scripts.html' %}
+	</body>
+</html>

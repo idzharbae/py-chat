@@ -1,0 +1,12 @@
+<div class='onlineUsers'>
+	<h1>ONLINE USERS</h1>
+	<div class='userTable'>
+	<table>
+		<tbody id='onlineUsers'>
+			{% for user in connectedUsers %}
+				<tr><td>{{user}}</td></tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	</div>
+</div>

@@ -31,7 +31,8 @@ function eraseCookie(name) {
   let user_name = getCookie('username');
   socket.on( 'connect', function() {
     socket.emit( 'room-1', {
-      data: user_name+' connected.'
+      data: user_name+' connected.',
+      username: user_name
     } )
     var form = $( 'form' ).on( 'submit', function( e ) {
       e.preventDefault()
@@ -46,10 +47,18 @@ function eraseCookie(name) {
   socket.on( 'message-broadcast', function( msg ) {
     if( typeof msg.data !== 'undefined' ) {
       $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.data+'</div>' )
+      addUserToOnlineDiv(msg.username)
     }
     else if( typeof msg.user_name !== 'undefined' ) {
       $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+':</b> '+msg.message+'</div>' )
     }
     mB.scrollTop = mB.scrollHeight;
   })
+
+
+  function addUserToOnlineDiv(displayName){
+    $("#onlineUsers").append(
+      '<tr><td>' + displayName + 
+      '</td></tr>')
+  }
 </script>
