@@ -1,6 +1,71 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 <script type="text/javascript">
+  var firstConnect = true;
+
+  // socket.io script
+  var mB = document.getElementById('messageBox');
+  var socket = io.connect('http://' + document.domain + ':' + location.port, {
+    'sync disconnect on unload': true });
+  let user_name = getCookie('username');
+  addMessageInputListener(socket);
+
+  io.sockets.on('connect', function(sock){
+    sock.emit('connection-event')
+    sock.on('disconnect', function(){
+      console.log('disconnect');
+      sock.emit('disconnection-event', getCookie('username'))
+    })
+  })
+
+  socket.on( 'connect', function() {
+    socket.emit( 'room-1', {
+      data: user_name+' connected.',
+      username: user_name
+    } )
+  } )
+
+  socket.on('update-online-users', function( newUser, usernames ){
+    document.getElementById('onlineUsers').innerHTML = "";
+    $( 'div.message_holder' ).append( '<div><b style="color: #000">'+newUser+' connected.</div>' );
+    addUserToOnlineDiv(usernames);
+  })
+  socket.on('disconnect-online-users', function( newUser, usernames ){
+    document.getElementById('onlineUsers').innerHTML = "";
+    $( 'div.message_holder' ).append( '<div><b style="color: #000">'+newUser+' disconnected.</div>' );
+    addUserToOnlineDiv(usernames);
+  })
+
+  socket.on( 'message-broadcast', function( msg ) {
+    $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+':</b> '+msg.message+'</div>' )
+    mB.scrollTop = mB.scrollHeight;
+  })
+
+  function addMessageInputListener(socket){
+    $( 'form' ).on( 'submit', function( e ) {
+      e.preventDefault()
+      let user_input = $( 'input.message' ).val()
+      socket.emit( 'room-1', {
+        user_name : user_name,
+        message : user_input
+      } )
+      $( 'input.message' ).val( '' ).focus()
+    } )
+  }
+  function addUserToOnlineDiv(usernames){
+    for(var i = 0; i < usernames.length; i++){
+        $("#onlineUsers").append(
+          '<tr><td>' + usernames[i] + 
+          '</td></tr>')
+      }
+  }
+
+  function logout(){
+    socket.emit('disconnection-event', getCookie('username'))
+    firstConnect = true;
+    eraseCookie('username');
+    window.location.href = document.location+"/";
+  }
   // get cookie
   function setCookie(name,value,days) {
     var expires = "";
@@ -10,55 +75,18 @@
         expires = "; expires=" + date.toUTCString();
     }
     document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-}
-function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
-function eraseCookie(name) {   
-    document.cookie = name+'=; Max-Age=-99999999;';  
-}
-
-  // socket.io script
-  var mB = document.getElementById('messageBox');
-  var socket = io.connect('http://' + document.domain + ':' + location.port);
-  let user_name = getCookie('username');
-  socket.on( 'connect', function() {
-    socket.emit( 'room-1', {
-      data: user_name+' connected.',
-      username: user_name
-    } )
-    var form = $( 'form' ).on( 'submit', function( e ) {
-      e.preventDefault()
-      let user_input = $( 'input.message' ).val()
-      socket.emit( 'room-1', {
-        user_name : user_name,
-        message : user_input
-      } )
-      $( 'input.message' ).val( '' ).focus()
-    } )
-  } )
-  socket.on( 'message-broadcast', function( msg ) {
-    if( typeof msg.data !== 'undefined' ) {
-      $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.data+'</div>' )
-      addUserToOnlineDiv(msg.username)
-    }
-    else if( typeof msg.user_name !== 'undefined' ) {
-      $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+':</b> '+msg.message+'</div>' )
-    }
-    mB.scrollTop = mB.scrollHeight;
-  })
-
-
-  function addUserToOnlineDiv(displayName){
-    $("#onlineUsers").append(
-      '<tr><td>' + displayName + 
-      '</td></tr>')
+  }
+  function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0;i < ca.length;i++) {
+          var c = ca[i];
+          while (c.charAt(0)==' ') c = c.substring(1,c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+      }
+      return null;
+  }
+  function eraseCookie(name) {   
+      document.cookie = name+'=; Max-Age=-99999999;';  
   }
 </script>

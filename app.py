@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO
 
 app = Flask(__name__)
@@ -17,6 +17,19 @@ def sessions():
 	if 'username' not in request.cookies:
 		return redirect(url_for('login'))
 	return render_template('dashboard.html', user='world', connectedUsers=connectedUsers)
+
+@socketio.on('connection-event')
+def connectionEvent():
+	print('connection event.')
+	username = request.cookies.get('username')
+	connectedUsers.append(username)
+	socketio.emit('update-online-users', (username, connectedUsers))
+
+@socketio.on('disconnection-event')
+def disconnectionEvent(username):
+	print('disconnection event.')
+	connectedUsers.remove(username)
+	socketio.emit('disconnect-online-user', (username, connectedUsers))
 
 @socketio.on('room-1')
 def handleMyCustomEvent(json, methods=['GET','POST']):
