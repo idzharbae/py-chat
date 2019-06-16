@@ -5,15 +5,11 @@
 <div id="roomBox" class="roomBox">
 	<table>
 		<tbody>
-			<tr><td onclick="goto('dashboard');">
-				dashboard
+			{% for r in rooms %}
+			<tr><td onclick="goto('{{r}}');">
+				{{r}}
 			</td></tr>
-			<tr><td onclick="goto('1');">
-				room 1
-			</td></tr>
-			<tr><td onclick="goto('2');">
-				room 2
-			</td></tr>
+			{% endfor %}
 		</tbody>
 	</table>
 </div>

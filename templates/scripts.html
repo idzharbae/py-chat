@@ -33,8 +33,12 @@
   })
 
   socket.on( 'message-broadcast-'+room, function( msg ) {
+    var scrollBottom = false;
+    if(mB.scrollHeight - (mB.scrollTop + mB.clientHeight) < 2)
+      scrollBottom = true;
     $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+':</b> '+msg.message+'</div>' )
-    mB.scrollTop = mB.scrollHeight;
+    if(scrollBottom)
+      mB.scrollTop = mB.scrollHeight;
   })
 
   function addMessageInputListener(socket){

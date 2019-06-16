@@ -52,8 +52,9 @@ html [type="button"],
 }
 
 .message{
+  margin-left: 25px;
   font-family: 'Roboto Mono';
-	width: calc(100% - 70px);
+	width: calc(100% - 50px);
 }
 
 .btn {

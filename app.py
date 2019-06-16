@@ -4,6 +4,7 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 socketio = SocketIO(app)
+rooms = ['dashboard','random','work']
 connectedUsers = {}
 
 @app.route('/')
@@ -16,7 +17,7 @@ def login():
 def sessions(room):
 	if 'username' not in request.cookies:
 		return redirect(url_for('login'))
-	return render_template('dashboard.html', user='world', connectedUsers=connectedUsers, room=room)
+	return render_template('dashboard.html', user='world', connectedUsers=connectedUsers, room=room, rooms=rooms)
 
 @socketio.on('connection-event')
 def connectionEvent():
