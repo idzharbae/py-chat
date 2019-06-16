@@ -1,7 +1,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 <script type="text/javascript">
-  var firstConnect = true;
 
   // socket.io script
   var mB = document.getElementById('messageBox');
@@ -10,27 +9,21 @@
   let user_name = getCookie('username');
   addMessageInputListener(socket);
 
-  io.sockets.on('connect', function(sock){
-    sock.emit('connection-event')
-    sock.on('disconnect', function(){
-      console.log('disconnect');
-      sock.emit('disconnection-event', getCookie('username'))
-    })
+  socket.on('connect', function(){
+    socket.emit('connection-event')
   })
-
-  socket.on( 'connect', function() {
-    socket.emit( 'room-1', {
-      data: user_name+' connected.',
-      username: user_name
-    } )
-  } )
-
+  window.addEventListener("beforeunload", function (e) {
+      socket.disconnect();
+      (e || window.event).returnValue = null;
+      return null;
+  });
   socket.on('update-online-users', function( newUser, usernames ){
     document.getElementById('onlineUsers').innerHTML = "";
     $( 'div.message_holder' ).append( '<div><b style="color: #000">'+newUser+' connected.</div>' );
     addUserToOnlineDiv(usernames);
   })
   socket.on('disconnect-online-users', function( newUser, usernames ){
+    console.log('disconnect online users');
     document.getElementById('onlineUsers').innerHTML = "";
     $( 'div.message_holder' ).append( '<div><b style="color: #000">'+newUser+' disconnected.</div>' );
     addUserToOnlineDiv(usernames);
@@ -59,7 +52,6 @@
           '</td></tr>')
       }
   }
-
   function logout(){
     socket.emit('disconnection-event', getCookie('username'))
     firstConnect = true;

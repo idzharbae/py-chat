@@ -25,18 +25,17 @@ def connectionEvent():
 	connectedUsers.append(username)
 	socketio.emit('update-online-users', (username, connectedUsers))
 
-@socketio.on('disconnection-event')
-def disconnectionEvent(username):
-	print('disconnection event.')
+@socketio.on('disconnect')
+def disconnect():
+	username = request.cookies.get('username')
+	print(username+' disconnected.')
 	connectedUsers.remove(username)
-	socketio.emit('disconnect-online-user', (username, connectedUsers))
+	socketio.emit('disconnect-online-users', (username, connectedUsers))
+	print('disconnection event.')
 
 @socketio.on('room-1')
 def handleMyCustomEvent(json, methods=['GET','POST']):
 	print('room-1 message: '+str(json))
-	if(json['username']):
-		connectedUsers.append(json['username'])
-		print(connectedUsers)
 	socketio.emit('message-broadcast', json)
 
 if __name__ == '__main__':
