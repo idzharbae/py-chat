@@ -42,7 +42,7 @@
   })
 
   function addMessageInputListener(socket){
-    $( 'form' ).on( 'submit', function( e ) {
+    $( 'form#messageInput' ).on( 'submit', function( e ) {
       e.preventDefault()
       let user_input = $( 'input.message' ).val()
       socket.emit( 'room', {
@@ -61,10 +61,8 @@
       }
   }
   function logout(){
-    socket.emit('disconnection-event', getCookie('username'))
-    firstConnect = true;
     eraseCookie('username');
-    window.location.href = document.location+"/";
+    window.location.href = document.location.protocol+'//'+document.location.host;
   }
   // get cookie
   function setCookie(name,value,days) {
@@ -87,9 +85,37 @@
       return null;
   }
   function eraseCookie(name) {   
-      document.cookie = name+'=; Max-Age=-99999999;';  
+      document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
   }
   function goto(room){
     window.location.href = document.location.protocol+'//'+document.location.host+"/chat/"+room;
   }
+</script>
+
+<script>
+  // Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+} 
 </script>

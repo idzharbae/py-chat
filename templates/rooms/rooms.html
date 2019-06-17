@@ -13,4 +13,20 @@
 		</tbody>
 	</table>
 </div>
+<div class="footer">
+   	<button id="myBtn" class="btn btn-primary" style="margin-left: 20px">New Room</button>
+</div>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form method="POST" action="/new-room">
+    	<input class="col" type="text" name="roomTitle" placeholder="room title">
+    	<input type="submit" name="submit" value="submit">
+    </form>
+  </div>
+
+</div>
 {% endblock %}

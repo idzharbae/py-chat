@@ -10,14 +10,24 @@ connectedUsers = {}
 @app.route('/')
 def login():
 	if 'username' in request.cookies:
-		return redirect('/chat/')
+		return redirect('/chat/dashboard')
 	return render_template('login.html')
+
+@app.route('/chat')
+def chat():
+	return redirect('/chat/dashboard')
 
 @app.route('/chat/<room>')
 def sessions(room):
 	if 'username' not in request.cookies:
 		return redirect(url_for('login'))
 	return render_template('dashboard.html', user='world', connectedUsers=connectedUsers, room=room, rooms=rooms)
+
+@app.route('/new-room', methods=['GET','POST'])
+def newRoom():
+	room = request.form['roomTitle']
+	rooms.append(room)
+	return redirect('/chat/'+room)
 
 @socketio.on('connection-event')
 def connectionEvent():

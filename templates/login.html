@@ -5,9 +5,6 @@
 	<body>
 		<form action="#" method="GET">
 			<input type="text" class="username" placeholder="username"/>
-			<button type="submit" class="btn btn-primary">
-		    <i class="material-icons">send</i>
-		    </button>
 		</form>
 		<script src="{{ url_for('static', filename='js/jquery-1.12.4.min.js') }}"></script>
 		<script src="{{ url_for('static', filename='js/socket.io-1.7.3.min.js') }}"></script>
@@ -38,7 +35,7 @@
 			  e.preventDefault()
 			  let user_input = $( 'input.username' ).val()
     		  setCookie('username',$( 'input.username' ).val(),10000);
-    		  window.location.href = document.location+"/chat/dashboard";
+    		  window.location.href = document.location.protocol+'//'+document.location.host+"/chat/dashboard";
     		} )
 		</script>
 	</body>
